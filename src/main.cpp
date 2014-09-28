@@ -87,6 +87,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     imageExtensions << "bmp" << "png" << "jpg" << "jpeg";
     //command-line version
+
     if(argc > 1)
     {
         int textureWidth = 512;
@@ -108,6 +109,8 @@ int main(int argc, char *argv[])
         mainPacker = &packer;
         QString outDir = QDir::currentPath();
         QString outFile = "atlas";
+        QString imagePrefix = QString("");
+
         for (int i = 1; i < argc; ++i)
         {
             if(check_opt("--help") || check_opt("-h")|| check_opt("-?"))
@@ -134,6 +137,13 @@ int main(int argc, char *argv[])
                 QFileInfo info(argv[i]);
                 outFile = info.baseName();
                 outDir = info.absolutePath();
+            }
+            else if(check_opt("-p") || check_opt("--prefix"))
+            {
+                ++i;
+                if(i >= argc)
+                    printHelp("Argument needed for option -p");
+                imagePrefix = QString(argv[i]);
             }
             else if(check_opt("--disable-merge"))
             {
@@ -248,7 +258,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        qDebug() << "Saving to dir" << outDir << "and file" << outFile;
+        qDebug() << "Saving to dir " << outDir << "and file" << outFile;
         packer.sortOrder = sortorder;
         packer.border.t = 0;
         packer.border.l = 0;
@@ -327,7 +337,7 @@ int main(int argc, char *argv[])
                         size.transpose();
                         crop = QRect(crop.y(), crop.x(), crop.height(), crop.width());
                     }
-                    out << ((packerData*)(packer.images.at(i).id))->file <<
+                    out << imagePrefix << ((packerData*)(packer.images.at(i).id))->file <<
                            "\t" <<
                            pos.x() << "\t" <<
                            pos.y() << "\t" <<
@@ -340,6 +350,7 @@ int main(int argc, char *argv[])
                            (packer.images.at(i).rotated ? "r" : "") << "\n";
                 }
             }
+            positionsFile.close();
         }
 
         for (int i = 0; i < packer.images.size(); i++)

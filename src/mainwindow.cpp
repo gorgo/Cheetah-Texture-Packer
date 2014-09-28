@@ -148,6 +148,7 @@ void MainWindow::packerUpdate()
     int textureWidth = ui->textureW->value(), textureHeight = ui->textureH->value();
     int heuristic = ui->comboHeuristic->currentIndex();
     QString outDir = ui->outDir->text();
+    QString outPrefix = ui->outPrefix->text();
     QString outFile = ui->outFile->text();
     QString outFormat = ui->outFormat->currentText();
     bool previewWithImages =ui->previewWithImages->isChecked();
@@ -208,7 +209,7 @@ void MainWindow::packerUpdate()
                         size.transpose();
                         crop = QRect(crop.y(), crop.x(), crop.height(), crop.width());
                     }
-                    out << (((packerData*)(packer.images.at(i).id))->listItem)->text() <<
+                    out << outPrefix << (((packerData*)(packer.images.at(i).id))->listItem)->text() <<
                            "\t" <<
                            pos.x() << "\t" <<
                            pos.y() << "\t" <<
